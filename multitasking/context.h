@@ -20,9 +20,9 @@ volatile int *os_task_current_context = &os_task_current_context_addr;
 //load context from the address os_task_current_context_addr
 #define LOAD_CONTEXT() \
 asm volatile(      \
-"lds r26, os_task_current_context \n" \ 
+"lds r26, os_task_current_context \n" \
 "lds r27, os_task_current_context + 1 \n" \
-"ld r28, X+ \n" \ 
+"ld r28, X+ \n" \
 "out __SP_L__, r28 \n" \
 "ld r29, X+ \n" \
 "out __SP_H__, r29 \n" \
@@ -100,9 +100,9 @@ asm volatile (      \
 "push r30        \n" \
 "push r31        \n" \
 "in r0, __SP_L__ \n" \
-"lds r26, os_task_current_context \n" \ 
+"lds r26, os_task_current_context \n" \
 "lds r27, os_task_current_context+1 \n" \
-"st X+, r0 \n" \ 
+"st X+, r0 \n" \
 "in r0, __SP_H__ \n" \
 "st X+, r0 \n" \
 );
