@@ -83,3 +83,22 @@ int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item) {
 	
 	return 1;	
 }
+
+//Find task in the queue. Return NULL if not found
+os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task) {
+	if((*queue).length == 0) return NULL;
+	
+	int found = 0;
+	
+	os_tasks_queue_item *pointer = (*queue).queue;
+	do {
+		if((*pointer).task == task) {
+			found = 1;
+			break;
+		}
+	} while(pointer != (*queue).queue);
+	
+	if(!found) return NULL;
+	
+	return pointer;
+}

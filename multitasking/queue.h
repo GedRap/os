@@ -1,8 +1,9 @@
 /*
  * queue.h
  *
- * Created: 24/11/2013 16:02:49
- *  Author: Ged
+ * My Little Operating System https://github.com/GedRap/os
+ *  - Multitasking module
+ * Header file for the tasks queue
  */ 
 
 
@@ -49,5 +50,7 @@ os_tasks_queue_item *os_task_queue_add(os_tasks_queue *queue, os_task *task);
 //Remove item from the queue
 int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item);
 
+//Find task in the queue. Return NULL if not found
+os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task);
 
 #endif /* QUEUE_H_ */
