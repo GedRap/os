@@ -10,6 +10,9 @@
 #ifndef TASK_H_
 #define TASK_H_
 
+//Forward type declaration, needed because of the include guards
+typedef struct os_tasks_queue_ os_tasks_queue;
+
 //Task states
 #define OS_TASK_STATE_NOT_STARTED 0
 #define OS_TASK_STATE_RUNNING 1
@@ -21,7 +24,8 @@
 #define OS_TASK_PRIORITY_HIGH 3
 
 //Task data structure
-typedef struct {
+typedef struct os_task_ os_task;
+struct os_task_ {
 	int pid; //unique pid, might be used in future
 	
 	int state; //state, constants defined above
@@ -31,14 +35,14 @@ typedef struct {
 	int context_addr; //address of the context
 	
 	//pointer to the entry function, this os_task object will be passed
-	void (*entry_point)(os_task); 
+	void (*entry_point)(os_task *); 
 	
 	int priority; //priority, constants defined above
 	
 	//how many time slices the task had. set to 0
 	//when the task is switched to. used for priorities
 	int time_slices_had;
-} os_task ;
+};
 
 //Create task instance, which can be added to the queue
 os_task *os_task_create(void (*entry_point)(os_task*), int priority);

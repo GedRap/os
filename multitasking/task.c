@@ -15,10 +15,10 @@
 #include "context.h"
 
 //Create task instance, which can be added to the queue
-os_task *os_task_create(void (*entry_point)(os_task*), int priority) {
+os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 	os_task *task = (os_task *)malloc(sizeof(os_task));
 	
-	int pid = os_multitasking_state(os_state_multitasking);
+	int pid = os_multitasking_get_next_pid(os_state_multitasking);
 	(*task).pid = pid;
 	(*task).state = OS_TASK_STATE_NOT_STARTED;
 	(*task).entry_point = entry_point;
@@ -58,8 +58,10 @@ void os_task_execute(os_task *task) {
 		(*task).state = OS_TASK_STATE_RUNNING;
 		
 		os_task_current_context_addr = (*task).context_addr;
-		
-		(*task).entry_point(task);
+
+		void (*entry_point)(os_task *);
+		entry_point = task->entry_point;
+		entry_point(task);
 	}
 	
 	if(state == OS_TASK_STATE_PAUSED) {

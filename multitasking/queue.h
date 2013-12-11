@@ -13,9 +13,9 @@
 #include "task.h"
 
 //Single item of the tasks queue
-typedef struct os_tasks_queue_item_struct os_tasks_queue_item;
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
 
-typedef struct  os_tasks_queue_item_struct {
+struct os_tasks_queue_item_ {
 	os_task *task;
 	os_tasks_queue_item *prev;
 	os_tasks_queue_item *next;
@@ -25,7 +25,8 @@ typedef struct  os_tasks_queue_item_struct {
 
 //Circular linked list with moving pointer current_task
 // to store the queue of tasks
-typedef struct {
+typedef struct os_tasks_queue_ os_tasks_queue;
+struct os_tasks_queue_ {
 	//points to the head of the queue
 	os_tasks_queue_item *queue; 
 	
@@ -37,7 +38,7 @@ typedef struct {
 	
 	//total length
 	int length; 
-} os_tasks_queue;
+} ;
 
 
 
