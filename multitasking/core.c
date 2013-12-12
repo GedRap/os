@@ -5,9 +5,11 @@
  */ 
 #include <stdlib.h> 
 
+#include "core.h"
+
 //Initialize multitasking. Sets up the global state variable
 void os_multitasking_init() {
-	os_state_multitasking = (os_multitasking_state *)malloc(sizeof(os_multitasking_state));
+	os_state_multitasking = (os_multitasking_state*)malloc(sizeof(os_multitasking_state));
 	
 	(*os_state_multitasking).last_pid = 0;
 	
@@ -19,4 +21,8 @@ int os_multitasking_get_next_pid(os_multitasking_state *state) {
 	(*state).last_pid++;
 	
 	return (*state).last_pid;
+}
+
+void os_multitasking_isr() {
+	return;	
 }
