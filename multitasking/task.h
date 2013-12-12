@@ -11,7 +11,11 @@
 #define TASK_H_
 
 //Forward type declaration, needed because of the include guards
+typedef struct os_task_ os_task;
+
 typedef struct os_tasks_queue_ os_tasks_queue;
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task);
 
 //Task states
 #define OS_TASK_STATE_NOT_STARTED 0
@@ -24,7 +28,6 @@ typedef struct os_tasks_queue_ os_tasks_queue;
 #define OS_TASK_PRIORITY_HIGH 3
 
 //Task data structure
-typedef struct os_task_ os_task;
 struct os_task_ {
 	int pid; //unique pid, might be used in future
 	

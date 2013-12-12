@@ -10,10 +10,14 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
-#include "queue.h"
+#include "core.h"
+#include "task.h"
 
-typedef struct os_tasks_queue_ os_tasks_queue;
-typedef struct os_multitasking_state_ os_multitasking_state;
+typedef struct os_task_ os_task;
+
+//Single item of the tasks queue
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+
 
 //Get the next task to execute, based on the current state of the multitasking
 //which involves what's the current task now, how much time has the task had,
@@ -21,9 +25,6 @@ typedef struct os_multitasking_state_ os_multitasking_state;
 //Current implementation is a round robin
 os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state);
 
-
-//Single item of the tasks queue
-typedef struct os_tasks_queue_item_ os_tasks_queue_item;
 
 struct os_tasks_queue_item_ {
 	os_task *task;

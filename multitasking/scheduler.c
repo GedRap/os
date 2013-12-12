@@ -5,10 +5,10 @@
  *  Author: Ged
  */ 
 
-#include "queue.h"
-#include "multitasking.h"
-#include "scheduler.h"
+#include <stdlib.h>
 
+
+#include "scheduler.h"
 
 //Get the next task to execute, based on the current state of the multitasking
 //which involves what's the current task now, how much time has the task had,
@@ -23,10 +23,10 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 	if(current_task->time_slices_had >= current_task->priority) {
 		//go to the next task
 		return current_item->next;
-	} else {
-		//keep the same task running
-		return current_item;
 	}
+	
+	//keep the same task running
+	return current_item;
 }
 
 //Init the queue

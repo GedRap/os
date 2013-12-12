@@ -9,10 +9,11 @@
 
 #include <stdlib.h>
 
+#include "core.h"
 #include "task.h"
-#include "multitasking.h"
-#include "queue.h"
-#include "context.h"
+
+os_multitasking_state *os_state_multitasking;
+volatile int os_task_current_context_addr;
 
 //Create task instance, which can be added to the queue
 os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
