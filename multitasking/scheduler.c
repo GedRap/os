@@ -66,7 +66,7 @@ os_tasks_queue_item *os_task_queue_add(os_tasks_queue *queue, os_task *task) {
 	}
 	
 	(*item).task = task;
-	(*queue).length = 0;
+	(*queue).length++;
 	
 	return item;
 	
