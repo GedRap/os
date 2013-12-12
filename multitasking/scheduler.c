@@ -52,7 +52,6 @@ os_tasks_queue_item *os_task_queue_add(os_tasks_queue *queue, os_task *task) {
 		(*item).prev = item;
 		
 		(*queue).queue = item;
-		(*queue).queue_tail = item;
 	} else {
 		//add to the end of the queue
 		(*item).prev = (*queue).queue_tail;
@@ -64,6 +63,8 @@ os_tasks_queue_item *os_task_queue_add(os_tasks_queue *queue, os_task *task) {
 		os_tasks_queue_item *head = (*queue).queue;
 		(*head).prev = item;
 	}
+	
+	(*queue).queue_tail = item;
 	
 	(*item).task = task;
 	(*queue).length++;

@@ -41,9 +41,9 @@ int main(void)
 	
 	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_NORMAL); 
 	os_tasks_queue_item *task2_item = os_task_queue_add(queue, task2);
-		
+	
     while(1)
     {
-        //TODO:: Please write your application code 
+        
     }
 }
