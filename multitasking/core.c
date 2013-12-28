@@ -5,6 +5,7 @@
  */ 
 #include <stdlib.h> 
 
+#include "task.h"
 #include "core.h"
 
 //Initialize multitasking. Sets up the global state variable
@@ -24,5 +25,8 @@ int os_multitasking_get_next_pid(os_multitasking_state *state) {
 }
 
 void os_multitasking_isr() {
-	return;	
+	SAVE_CONTEXT();
+	os_tasks_queue_item *next_item = os_task_scheduler_next(os_state_multitasking);
+	os_task *next_task = next_item->task;
+	os_task_execute(next_task);	
 }

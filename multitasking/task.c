@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 
-#include "core.h"
+//#include "core.h"
 #include "task.h"
 
 os_multitasking_state *os_state_multitasking;
@@ -50,6 +50,10 @@ void os_task_execute(os_task *task) {
 	
 	if(state == OS_TASK_STATE_RUNNING) {
 		(*task).time_slices_had++;
+		
+		os_task_current_context_addr = (*task).context_addr;
+		LOAD_CONTEXT();
+		asm volatile("ret");
 		
 		return;
 	}

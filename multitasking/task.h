@@ -10,7 +10,7 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-//Forward type declaration, needed because of the include guards
+//Forward type declarations, needed because of the include guards
 typedef struct os_task_ os_task;
 
 typedef struct os_tasks_queue_ os_tasks_queue;

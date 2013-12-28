@@ -8,16 +8,25 @@
 #ifndef CORE_H_
 #define CORE_H_
 
-typedef struct os_tasks_queue_ os_tasks_queue;
+
+//forward declarations
+//typedef struct os_task_ os_task;
 
 //OS multitasking related state
 typedef struct os_multitasking_state_ os_multitasking_state;
+
+typedef struct os_tasks_queue_ os_tasks_queue;
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+
+os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state);
+
+
 
 //Init the queue. Forward declaration.
 // @TODO think more about dependencies. This declaration doesn't really
 // belong here
 os_tasks_queue *os_tasks_queue_init();
-typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+
 int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item);
 
 struct os_multitasking_state_ {

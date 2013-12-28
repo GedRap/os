@@ -33,6 +33,8 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 		return current_item;
 	}
 	
+	current_task->state = OS_TASK_STATE_PAUSED;
+	
 	return current_item->next;
 }
 
