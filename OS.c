@@ -12,7 +12,7 @@
 
 os_multitasking_state *os_state_multitasking;
 
- volatile int *os_task_current_context = &os_task_current_context_addr;
+volatile int *os_task_current_context = &os_task_current_context_addr;
 
 int task1_counter = 0;
 int task2_counter = 0;
@@ -39,11 +39,15 @@ int main(void)
 	os_task *task1 = os_task_create(&task1_ep, OS_TASK_PRIORITY_LOW);
 	os_tasks_queue_item *task1_item = os_task_queue_add(queue, task1);
 	
-	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_NORMAL); 
+	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_LOW); 
 	os_tasks_queue_item *task2_item = os_task_queue_add(queue, task2);
 	
     while(1)
     {
-        
+        os_tasks_queue_item *task_to_run = os_task_scheduler_next(os_state_multitasking);
+		if(task_to_run != NULL) {
+			os_task *task = task_to_run->task;
+			os_task_execute(task);
+		}			
     }
 }
