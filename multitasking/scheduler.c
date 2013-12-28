@@ -17,16 +17,23 @@
 os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 	os_tasks_queue *queue = (*state).queue;
 	
+	if(queue->length == 0) {
+		return NULL;
+	}
+	
 	os_tasks_queue_item *current_item = queue->current_task;
 	os_task *current_task = current_item->task;
 	
-	if(current_task->time_slices_had >= current_task->priority) {
-		//go to the next task
-		return current_item->next;
+	if(current_item == NULL) {
+		//no task is running, pick the first one
+		return queue->queue;
 	}
 	
-	//keep the same task running
-	return current_item;
+	if(current_task->time_slices_had < current_task->priority) {
+		return current_item;
+	}
+	
+	return current_item->next;
 }
 
 //Init the queue
