@@ -4,10 +4,67 @@
  * Core multitasking data structures and methods signatures
  */ 
 
+#ifndef TASK_H_
+#define TASK_H_
+
+//Forward type declarations, needed because of the include guards
+typedef struct os_task_ os_task;
+
+typedef struct os_tasks_queue_ os_tasks_queue;
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task);
+
+//Task states
+#define OS_TASK_STATE_NOT_STARTED 0
+#define OS_TASK_STATE_RUNNING 1
+#define OS_TASK_STATE_PAUSED 2
+
+//Task priorities
+#define OS_TASK_PRIORITY_LOW 1
+#define OS_TASK_PRIORITY_NORMAL 2
+#define OS_TASK_PRIORITY_HIGH 3
+
+//Task data structure
+struct os_task_ {
+	int pid; //unique pid, might be used in future
+	
+	int state; //state, constants defined above
+	
+	int *context; //pointer to address where the context is stored
+	
+	int context_addr; //address of the context
+	
+	//pointer to the entry function, this os_task object will be passed
+	void (*entry_point)(os_task *);
+	
+	int priority; //priority, constants defined above
+	
+	//how many time slices the task had. set to 0
+	//when the task is switched to. used for priorities
+	int time_slices_had;
+};
+
+//Create task instance, which can be added to the queue
+os_task *os_task_create(void (*entry_point)(os_task*), int priority);
+
+//Kill task, remove from the queue
+int os_task_kill(os_tasks_queue *queue, os_task *task);
+
+//Either resume or start the task
+void os_task_execute(os_task *task);
+
+//Set priority for the given task
+int os_task_set_priority(os_task *task, int priority);
+
+//Return to the scheduler, meant to be called from the task itself
+//Task passes it's own data structure so the scheduler knows who returned
+void os_task_return_to_scheduler(os_task *task);
+
+
+#endif /* TASK_H_ */
 
 #ifndef CORE_H_
 #define CORE_H_
-
 
 //forward declarations
 //typedef struct os_task_ os_task;
@@ -42,6 +99,8 @@ extern os_multitasking_state *os_state_multitasking;
 void os_multitasking_init();
 
 int os_multitasking_get_next_pid(os_multitasking_state *state);
+
+void os_multitasking_start();
 
 void os_multitasking_isr();
 
@@ -146,3 +205,61 @@ asm volatile (      \
 );
 
 #endif /* CORE_H_ */
+
+#ifndef SCHEDULER_H_
+#define SCHEDULER_H_
+
+//typedef struct os_task_ os_task;
+
+//Single item of the tasks queue
+typedef struct os_tasks_queue_item_ os_tasks_queue_item;
+
+
+//Get the next task to execute, based on the current state of the multitasking
+//which involves what's the current task now, how much time has the task had,
+//what's it's priority and etc.
+//Current implementation is a round robin
+os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state);
+
+
+struct os_tasks_queue_item_ {
+	os_task *task;
+	os_tasks_queue_item *prev;
+	os_tasks_queue_item *next;
+};
+
+
+
+//Circular linked list with moving pointer current_task
+// to store the queue of tasks
+typedef struct os_tasks_queue_ os_tasks_queue;
+struct os_tasks_queue_ {
+	//points to the head of the queue
+	os_tasks_queue_item *queue;
+	
+	//task being executed now
+	os_tasks_queue_item *current_task;
+	
+	//points to the last inserted task
+	os_tasks_queue_item *queue_tail;
+	
+	//total length
+	int length;
+} ;
+
+
+
+//Init the queue
+os_tasks_queue *os_tasks_queue_init();
+
+//Add item to the tasks queue
+os_tasks_queue_item *os_task_queue_add(os_tasks_queue *queue, os_task *task);
+
+//Remove item from the queue
+int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item);
+
+//Find task in the queue. Return NULL if not found
+os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task);
+
+
+#endif /* SCHEDULER_H_ */
