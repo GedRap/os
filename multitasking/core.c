@@ -6,6 +6,7 @@
 #include <stdlib.h> 
 
 #include "core.h"
+#include "../memory.h"
 
 //Initialize multitasking. Sets up the global state variable
 void os_multitasking_init() {
@@ -37,10 +38,17 @@ void os_multitasking_start() {
 
 void os_multitasking_isr() {
 	SAVE_CONTEXT();
+	os_get_sp();
+	os_task_sp_addr = os_global_sp_addr;
+	os_global_sp_addr = os_state_multitasking->os_sp;
+	os_set_sp();
+	LOAD_OS_CONTEXT();
 	os_tasks_queue *queue = os_state_multitasking->queue;
 	if(queue->current_task != NULL) {
 		os_task *current_task = queue->current_task->task;
 		current_task->time_slices_had++;
+		current_task->sp = os_task_sp_addr;
+		
 	}
 	os_tasks_queue_item *next_item = os_task_scheduler_next(os_state_multitasking);
 	
@@ -57,8 +65,9 @@ void os_multitasking_isr() {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-os_multitasking_state *os_state_multitasking;
-volatile int os_task_current_context_addr;
+//os_multitasking_state *os_state_multitasking;
+//volatile int os_task_current_context_addr;
+
 
 //Create task instance, which can be added to the queue
 os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
@@ -72,9 +81,13 @@ os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 	if(priority < 1) priority = 1;
 	(*task).priority = priority;
 	
-	task->context = &(task->context_addr);
 	
 	task->context_addr = malloc((sizeof(unsigned int)) * 64) + (sizeof(unsigned int) * 63);
+	task->context = &(task->context_addr);
+	
+	//task->sp = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
+	task->stack_bottom = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
+	task->sp = &(*os_task_stacks[task->pid - 1]);
 	
 	return task;
 }
@@ -107,6 +120,13 @@ void os_task_execute(os_task *task) {
 
 		void (*entry_point)(os_task *);
 		entry_point = task->entry_point;
+		
+		os_get_sp();
+		os_state_multitasking->os_sp = os_global_sp_addr;
+		os_global_sp_addr = task->sp;
+		SAVE_OS_CONTEXT();
+		os_set_sp();
+		
 		entry_point(task);
 	}
 	
@@ -119,6 +139,11 @@ void os_task_execute(os_task *task) {
 		(*task).state = OS_TASK_STATE_RUNNING;
 		
 		os_task_current_context_addr = (*task).context_addr;
+		os_get_sp();
+		os_state_multitasking->os_sp = os_global_sp_addr;
+		os_global_sp_addr = task->sp;
+		SAVE_OS_CONTEXT();
+		os_set_sp();
 		LOAD_CONTEXT();
 		asm volatile("ret");
 	}
@@ -145,6 +170,7 @@ void os_task_return_to_scheduler(os_task *task) {
 //what's it's priority and etc.
 //Current implementation is a round robin
 os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
+	state = os_state_multitasking;
 	os_tasks_queue *queue = (*state).queue;
 	
 	if(queue->length == 0) {
@@ -156,6 +182,7 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 	
 	if(current_item == NULL) {
 		//no task is running, pick the first one
+		queue->current_task = queue->queue;
 		return queue->queue;
 	}
 	
