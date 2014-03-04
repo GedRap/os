@@ -18,7 +18,17 @@ os_multitasking_state *os_state_multitasking;
 unsigned int os_global_sp_addr;
 unsigned int *os_global_sp_ptr = &os_global_sp_addr;
 
+unsigned int os_task_sp_addr;
+
+volatile int os_task_current_context_addr;
 volatile int *os_task_current_context = &os_task_current_context_addr;
+
+volatile int os_context_addr;
+volatile int *os_context = &os_context_addr;
+
+extern char *os_task_stacks[OS_TASK_STACKS];
+extern char os_task_stack0[OS_TASK_STACK_SIZE];
+extern char os_task_stack1[OS_TASK_STACK_SIZE];
 
 int task1_counter = 0;
 int task2_counter = 0;
