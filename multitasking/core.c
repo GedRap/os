@@ -39,7 +39,7 @@ void os_multitasking_start() {
 void os_multitasking_isr() {
 	SAVE_CONTEXT();
 	os_get_sp();
-	os_task_sp_addr = os_global_sp_addr;
+	os_task_sp_addr = (os_global_sp_addr+1);
 	os_global_sp_addr = os_state_multitasking->os_sp;
 	os_set_sp();
 	LOAD_OS_CONTEXT();
@@ -122,7 +122,7 @@ void os_task_execute(os_task *task) {
 		entry_point = task->entry_point;
 		
 		os_get_sp();
-		os_state_multitasking->os_sp = os_global_sp_addr;
+		os_state_multitasking->os_sp = (os_global_sp_addr+1);
 		os_global_sp_addr = task->sp;
 		SAVE_OS_CONTEXT();
 		os_set_sp();
