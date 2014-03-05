@@ -34,6 +34,7 @@ int task1_counter = 0;
 int task2_counter = 0;
 
 void task1_ep(os_task *task) {
+	//os_set_sp();
 	task_body:
 		task1_counter++;
 		//os_task_return_to_scheduler(task);
@@ -42,6 +43,7 @@ void task1_ep(os_task *task) {
 }
 
 void task2_ep(os_task *task) {
+	//os_set_sp();
 	task_body:
 		task2_counter++;
 		//os_task_return_to_scheduler(task);

@@ -83,7 +83,9 @@ os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 	(*task).priority = priority;
 	
 	
-	task->context_addr = malloc((sizeof(unsigned int)) * 64) + (sizeof(unsigned int) * 63);
+	//task->context_addr = malloc((sizeof(unsigned int)) * 64) + (sizeof(unsigned int) * 63);
+	task->context_addr = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
+	
 	task->context = &(task->context_addr);
 	
 	//task->sp = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
