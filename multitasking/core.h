@@ -106,7 +106,7 @@ int os_multitasking_get_next_pid(os_multitasking_state *state);
 
 void os_multitasking_start();
 
-void os_multitasking_isr();
+ __attribute__ ( ( signal, naked ) ) void os_multitasking_isr();
 
 //////////////////////////////////////////////////////////////////////////
 // Context Management

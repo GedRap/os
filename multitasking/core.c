@@ -38,17 +38,18 @@ void os_multitasking_start() {
 
 void os_multitasking_isr() {
 	SAVE_CONTEXT();
-	os_get_sp();
-	os_task_sp_addr = (os_global_sp_addr+1);
-	os_global_sp_addr = os_state_multitasking->os_sp;
-	os_set_sp();
-	LOAD_OS_CONTEXT();
+	
+	//os_get_sp();
+	//os_task_sp_addr = (os_global_sp_addr+1);
+	//os_global_sp_addr = os_state_multitasking->os_sp;
+	//os_set_sp();
+	//LOAD_OS_CONTEXT();
 	os_tasks_queue *queue = os_state_multitasking->queue;
 	if(queue->current_task != NULL) {
 		os_task *current_task = queue->current_task->task;
 		current_task->time_slices_had++;
 		current_task->sp = os_task_sp_addr;
-		
+		current_task->context_addr = os_task_current_context_addr;
 	}
 	os_tasks_queue_item *next_item = os_task_scheduler_next(os_state_multitasking);
 	
@@ -121,11 +122,11 @@ void os_task_execute(os_task *task) {
 		void (*entry_point)(os_task *);
 		entry_point = task->entry_point;
 		
-		os_get_sp();
-		os_state_multitasking->os_sp = (os_global_sp_addr+1);
-		os_global_sp_addr = task->sp;
-		SAVE_OS_CONTEXT();
-		os_set_sp();
+		//os_get_sp();
+		//os_state_multitasking->os_sp = (os_global_sp_addr+1);
+		//os_global_sp_addr = task->sp;
+		//SAVE_OS_CONTEXT();
+		//os_set_sp();
 		
 		entry_point(task);
 	}
@@ -139,11 +140,11 @@ void os_task_execute(os_task *task) {
 		(*task).state = OS_TASK_STATE_RUNNING;
 		
 		os_task_current_context_addr = (*task).context_addr;
-		os_get_sp();
-		os_state_multitasking->os_sp = os_global_sp_addr;
-		os_global_sp_addr = task->sp;
-		SAVE_OS_CONTEXT();
-		os_set_sp();
+		//os_get_sp();
+		//os_state_multitasking->os_sp = os_global_sp_addr;
+		//os_global_sp_addr = task->sp;
+		//SAVE_OS_CONTEXT();
+		//os_set_sp();
 		LOAD_CONTEXT();
 		asm volatile("ret");
 	}
@@ -179,20 +180,24 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 	
 	os_tasks_queue_item *current_item = queue->current_task;
 	os_task *current_task = current_item->task;
+	os_tasks_queue_item *next_item;
 	
 	if(current_item == NULL) {
 		//no task is running, pick the first one
 		queue->current_task = queue->queue;
-		return queue->queue;
-	}
+		next_item = queue->queue;
+	} else {
+		if(current_task->time_slices_had < current_task->priority) {
+			next_item = current_item;
+		} else {
+			current_task->state = OS_TASK_STATE_PAUSED;
+			next_item = current_item->next;
+		}
+	}		
 	
-	if(current_task->time_slices_had < current_task->priority) {
-		return current_item;
-	}
+	queue->current_task = next_item;
 	
-	current_task->state = OS_TASK_STATE_PAUSED;
-	
-	return current_item->next;
+	return next_item;
 }
 
 //Init the queue
