@@ -39,16 +39,10 @@ void os_multitasking_start() {
 void os_multitasking_isr() {
 	SAVE_CONTEXT();
 	
-	//os_get_sp();
-	//os_task_sp_addr = (os_global_sp_addr+1);
-	//os_global_sp_addr = os_state_multitasking->os_sp;
-	//os_set_sp();
-	//LOAD_OS_CONTEXT();
 	os_tasks_queue *queue = os_state_multitasking->queue;
 	if(queue->current_task != NULL) {
 		os_task *current_task = queue->current_task->task;
 		current_task->time_slices_had++;
-		current_task->sp = os_task_sp_addr;
 		current_task->context_addr = os_task_current_context_addr;
 	}
 	os_tasks_queue_item *next_item = os_task_scheduler_next(os_state_multitasking);
@@ -82,15 +76,8 @@ os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 	if(priority < 1) priority = 1;
 	(*task).priority = priority;
 	
-	
-	//task->context_addr = malloc((sizeof(unsigned int)) * 64) + (sizeof(unsigned int) * 63);
 	task->context_addr = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	
 	task->context = &(task->context_addr);
-	
-	//task->sp = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	task->stack_bottom = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	task->sp = &(*os_task_stacks[task->pid - 1]);
 	
 	return task;
 }
