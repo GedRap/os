@@ -58,6 +58,9 @@ void task3_ep(os_task *task) {
 	//os_set_sp();
 	task_body:
 		task3_counter++;
+		if(task3_counter == 10) {
+			task->priority = OS_TASK_PRIORITY_NORMAL;
+		}
 		//os_task_return_to_scheduler(task);
 		os_multitasking_isr();
 	goto task_body;

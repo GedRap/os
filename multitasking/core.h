@@ -51,7 +51,7 @@ struct os_task_ {
 os_task *os_task_create(void (*entry_point)(os_task*), int priority);
 
 //Kill task, remove from the queue
-int os_task_kill(os_tasks_queue *queue, os_task *task);
+int os_task_kill(os_task *task);
 
 //Either resume or start the task
 void os_task_execute(os_task *task);

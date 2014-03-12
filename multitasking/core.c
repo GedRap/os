@@ -86,14 +86,15 @@ os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 }
 
 //Kill the task. Removes the task from the queue and frees it's memory
-int os_task_kill(os_tasks_queue *queue, os_task *task) {
+int os_task_kill(os_task *task) {
+	os_tasks_queue *queue = os_state_multitasking->queue;
 	os_tasks_queue_item *queue_item = os_task_queue_find(queue, task);
 	
 	if(queue_item == NULL) return 0;
 	
 	os_task_queue_remove(queue, queue_item);
 	
-	free(task);
+	//free(task);
 	
 	return 1;
 }
