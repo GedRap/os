@@ -7,6 +7,7 @@
 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 #include "multitasking/core.h"
 #include "memory.h"
