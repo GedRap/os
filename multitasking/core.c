@@ -43,7 +43,6 @@ void os_multitasking_isr() {
 	if(queue->current_task != NULL) {
 		os_task *current_task = queue->current_task->task;
 		current_task->time_slices_had++;
-		current_task->sp = os_task_sp_addr;
 		current_task->context_addr = os_task_current_context_addr;
 	}
 	os_tasks_queue_item *next_item = os_task_scheduler_next(os_state_multitasking);
@@ -75,12 +74,7 @@ os_task *os_task_create(void (*entry_point)(os_task *), int priority) {
 	(*task).priority = priority;
 	
 	task->context_addr = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	
 	task->context = &(task->context_addr);
-	
-	//task->sp = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	task->stack_bottom = &(*os_task_stacks[task->pid - 1]) - OS_TASK_STACK_SIZE + 1;
-	task->sp = &(*os_task_stacks[task->pid - 1]);
 	
 	return task;
 }
