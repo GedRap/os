@@ -59,7 +59,7 @@ int main(void)
 	os_task *task1 = os_task_create(&task1_ep, OS_TASK_PRIORITY_LOW);
 	os_tasks_queue_item *task1_item = os_task_queue_add(queue, task1);
 	
-	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_LOW); 
+	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_NORMAL); 
 	os_tasks_queue_item *task2_item = os_task_queue_add(queue, task2);
 	
 	os_multitasking_start();

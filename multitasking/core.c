@@ -138,7 +138,6 @@ void os_task_execute(os_task *task) {
 	}
 	
 	if(state == OS_TASK_STATE_PAUSED) {
-		(*task).time_slices_had = 0;
 		(*task).state = OS_TASK_STATE_RUNNING;
 		
 		os_task_current_context_addr = (*task).context_addr;
@@ -189,10 +188,11 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state) {
 		queue->current_task = queue->queue;
 		next_item = queue->queue;
 	} else {
+		current_task->state = OS_TASK_STATE_PAUSED;
 		if(current_task->time_slices_had < current_task->priority) {
 			next_item = current_item;
 		} else {
-			current_task->state = OS_TASK_STATE_PAUSED;
+			current_task->time_slices_had = 0;
 			next_item = current_item->next;
 		}
 	}		
