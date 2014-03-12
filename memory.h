@@ -9,7 +9,7 @@
 #define MEMORY_H_
 
 #define OS_TASK_STACK_SIZE 128
-#define OS_TASK_STACKS 2
+#define OS_TASK_STACKS 3
 
 //SP address
 //Used by get_sp and set_sp methods. Has to be global so that I could use a label

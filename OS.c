@@ -29,9 +29,11 @@ volatile int *os_context = &os_context_addr;
 extern char *os_task_stacks[OS_TASK_STACKS];
 extern char os_task_stack0[OS_TASK_STACK_SIZE];
 extern char os_task_stack1[OS_TASK_STACK_SIZE];
+extern char os_task_stack2[OS_TASK_STACK_SIZE];
 
 int task1_counter = 0;
 int task2_counter = 0;
+int task3_counter = 0;
 
 void task1_ep(os_task *task) {
 	//os_set_sp();
@@ -51,6 +53,15 @@ void task2_ep(os_task *task) {
 	goto task_body;
 }
 
+void task3_ep(os_task *task) {
+	//os_set_sp();
+	task_body:
+		task3_counter++;
+		//os_task_return_to_scheduler(task);
+		os_multitasking_isr();
+	goto task_body;
+}
+
 int main(void)
 {
 	os_multitasking_init();
@@ -59,8 +70,11 @@ int main(void)
 	os_task *task1 = os_task_create(&task1_ep, OS_TASK_PRIORITY_LOW);
 	os_tasks_queue_item *task1_item = os_task_queue_add(queue, task1);
 	
-	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_NORMAL); 
+	os_task *task2 = os_task_create(&task2_ep, OS_TASK_PRIORITY_LOW); 
 	os_tasks_queue_item *task2_item = os_task_queue_add(queue, task2);
+	
+	os_task *task3 = os_task_create(&task3_ep, OS_TASK_PRIORITY_LOW);
+	os_tasks_queue_item *task3_item = os_task_queue_add(queue, task3);
 	
 	os_multitasking_start();
 	
