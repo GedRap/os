@@ -88,6 +88,7 @@ int os_task_kill(os_task *task) {
 	
 	os_task_queue_remove(queue, queue_item);
 	
+	//@TODO need to make sure it frees up the right thing
 	//free(task);
 	
 	return 1;

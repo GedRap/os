@@ -80,8 +80,6 @@ os_tasks_queue_item *os_task_scheduler_next(os_multitasking_state *state);
 
 
 //Init the queue. Forward declaration.
-// @TODO think more about dependencies. This declaration doesn't really
-// belong here
 os_tasks_queue *os_tasks_queue_init();
 
 int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item);
