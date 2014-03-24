@@ -11,11 +11,7 @@
 
 #include "multitasking/core.h"
 #include "memory.h"
-
-//use timer to switch tasks if set to 1
-//if set to 0, tasks will call scheduler and won't be swithced otherwise
-//helpful for debugging to make it deterministic
-#define OS_MULTITASKING_TIMER 0
+#include "timer/timer.h"
 
 //Global variable which holds current multitasking state
 //Such as pointer to the Queue
@@ -40,13 +36,16 @@ extern char os_task_stack0[OS_TASK_STACK_SIZE];
 extern char os_task_stack1[OS_TASK_STACK_SIZE];
 extern char os_task_stack2[OS_TASK_STACK_SIZE];
 
-int task1_counter = 0;
-int task2_counter = 0;
-int task3_counter = 0;
+volatile int task1_counter = 0;
+volatile int task2_counter = 0;
+volatile int task3_counter = 0;
 
 void task1_ep(os_task *task) {
 	task_body:
 		task1_counter++;
+		if(OS_MULTITASKING_TIMER == 1) {
+			sei();
+		}
 		if(OS_MULTITASKING_TIMER == 0) {
 			os_multitasking_isr();
 		}		
@@ -56,6 +55,9 @@ void task1_ep(os_task *task) {
 void task2_ep(os_task *task) {
 	task_body:
 		task2_counter++;
+		if(OS_MULTITASKING_TIMER == 1) {
+			sei();
+		}
 		if(OS_MULTITASKING_TIMER == 0) {
 			os_multitasking_isr();
 		}

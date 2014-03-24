@@ -33,12 +33,20 @@ void os_multitasking_start() {
 	}
 	
 	os_task *next_task = next_item->task;
+	
+	if(OS_MULTITASKING_TIMER == 1) {
+		//Set up timer but don't enable it yet
+		os_timer_init();
+	}		
+		
 	os_task_execute(next_task);
 }
 
 void os_multitasking_isr() {
 	SAVE_CONTEXT();
-	
+	if(OS_MULTITASKING_TIMER == 1) {
+		//os_timer_stop();
+	}
 	os_tasks_queue *queue = os_state_multitasking->queue;
 	if(queue->current_task != NULL) {
 		os_task *current_task = queue->current_task->task;
@@ -108,6 +116,9 @@ void os_task_execute(os_task *task) {
 		void (*entry_point)(os_task *);
 		entry_point = task->entry_point;
 		
+		if(OS_MULTITASKING_TIMER == 1) {
+			os_timer_start();
+		}
 		entry_point(task);
 	}
 	
@@ -120,6 +131,9 @@ void os_task_execute(os_task *task) {
 		(*task).state = OS_TASK_STATE_RUNNING;
 		
 		os_task_current_context_addr = (*task).context_addr;
+		if(OS_MULTITASKING_TIMER == 1) {
+			os_timer_start();
+		}
 		LOAD_CONTEXT();
 		asm volatile("ret");
 	}

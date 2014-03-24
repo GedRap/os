@@ -4,6 +4,8 @@
  * Core multitasking data structures and methods signatures
  */ 
 
+#include "../timer/timer.h"
+
 #ifndef TASK_H_
 #define TASK_H_
 
