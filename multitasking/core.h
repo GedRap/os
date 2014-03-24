@@ -6,8 +6,8 @@
 
 #include "../timer/timer.h"
 
-#ifndef TASK_H_
-#define TASK_H_
+#ifndef MULTITASKING_CORE_H_
+#define MULTITASKING_CORE_H_
 
 //Forward type declarations, needed because of the include guards
 typedef struct os_task_ os_task;
@@ -61,12 +61,6 @@ int os_task_set_priority(os_task *task, int priority);
 //Return to the scheduler, meant to be called from the task itself
 //Task passes it's own data structure so the scheduler knows who returned
 void os_task_return_to_scheduler(os_task *task);
-
-
-#endif /* TASK_H_ */
-
-#ifndef CORE_H_
-#define CORE_H_
 
 //forward declarations
 //typedef struct os_task_ os_task;
@@ -204,13 +198,6 @@ asm volatile (      \
 "st X+, r0 \n" \
 );
 
-#endif /* CORE_H_ */
-
-#ifndef SCHEDULER_H_
-#define SCHEDULER_H_
-
-//typedef struct os_task_ os_task;
-
 //Single item of the tasks queue
 typedef struct os_tasks_queue_item_ os_tasks_queue_item;
 
@@ -262,4 +249,4 @@ int os_task_queue_remove(os_tasks_queue *queue, os_tasks_queue_item *item);
 os_tasks_queue_item *os_task_queue_find(os_tasks_queue *queue, os_task *task);
 
 
-#endif /* SCHEDULER_H_ */
+#endif

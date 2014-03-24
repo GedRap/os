@@ -38,29 +38,23 @@ void os_timer_init() {
 	cli();
 	ICR1 = cycles;
 	SREG = oldSREG;
-	// enable global interrupts:
-	//sei();
-
+	
 	// Reset clock select registers and apply the correct bitmask
 	TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
 	TCCR1B |= os_timer_enabled_bits;
 	
-	//sei();
+	// enable global interrupts:
+	sei();
 }
 
 // Start the timer and enable interrupts
 void os_timer_start() {
-	//sei();
 	//Raise interrupt on overflow
 	TIMSK1 = _BV(TOIE1);
-		
-	//Apply bitmask
-	//TCCR1B |= os_timer_enabled_bits;
 }
 
 // Stop the timer
 // Clears all timer enable bits
 void os_timer_stop() {
-	//cli();
 	TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
 }
