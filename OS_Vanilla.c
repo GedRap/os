@@ -43,9 +43,7 @@ volatile int task3_counter = 0;
 void task1_ep(os_task *task) {
 	task_body:
 		task1_counter++;
-		if(OS_MULTITASKING_TIMER == 1) {
-			sei();
-		}
+		
 		if(OS_MULTITASKING_TIMER == 0) {
 			os_multitasking_isr();
 		}		
@@ -55,9 +53,7 @@ void task1_ep(os_task *task) {
 void task2_ep(os_task *task) {
 	task_body:
 		task2_counter++;
-		if(OS_MULTITASKING_TIMER == 1) {
-			sei();
-		}
+
 		if(OS_MULTITASKING_TIMER == 0) {
 			os_multitasking_isr();
 		}
