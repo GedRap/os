@@ -9,6 +9,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+//use timer to switch tasks if set to 1
+//if set to 0, tasks will call scheduler and won't be swithced otherwise
+//helpful for debugging to make it deterministic
+#define OS_MULTITASKING_TIMER 0
+
 //Clock 1 has resolution of 65536
 #define TIMER1_RESOLUTION 65536
 //Atmel 328P frequency is 16MHz

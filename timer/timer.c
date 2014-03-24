@@ -9,8 +9,8 @@
 
 #include "timer.h"
 
-//timer duration in microseconds, initial value of 10ms
-unsigned int os_timer_microseconds = 10000;
+//timer duration in microseconds, initial value of 0.1ms
+unsigned int os_timer_microseconds = 100;
 //bit mask for enabling timer
 unsigned char os_timer_enabled_bits;
 
@@ -39,24 +39,28 @@ void os_timer_init() {
 	ICR1 = cycles;
 	SREG = oldSREG;
 	// enable global interrupts:
-	sei();
+	//sei();
 
 	// Reset clock select registers and apply the correct bitmask
 	TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
 	TCCR1B |= os_timer_enabled_bits;
+	
+	//sei();
 }
 
 // Start the timer and enable interrupts
 void os_timer_start() {
+	//sei();
 	//Raise interrupt on overflow
 	TIMSK1 = _BV(TOIE1);
 		
 	//Apply bitmask
-	TCCR1B |= os_timer_enabled_bits;
+	//TCCR1B |= os_timer_enabled_bits;
 }
 
 // Stop the timer
 // Clears all timer enable bits
 void os_timer_stop() {
+	//cli();
 	TCCR1B &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
 }
